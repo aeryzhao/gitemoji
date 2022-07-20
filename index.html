@@ -6,12 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emoji</title>
+    <script src="dist/clipboard.min.js"></script>
 </head>
 
 <body>
-    <div>
-        <button class="btn" onclick="fillEmoji()">遍历 github emoji</button>
-    </div>
     <div id="emojiList">
 
     </div>
@@ -23,6 +21,11 @@
         margin: 0 auto;
         padding: 0;
     }
+
+    a {
+        text-decoration: blink;
+    }
+
     .btn {
         display: block;
         margin: 0 auto;
@@ -31,53 +34,77 @@
         border-radius: 3px;
         border: 3px solid palevioletred;
     }
+
     #emojiList {
-        border: 2px solid pink ;
+        border: 2px solid pink;
         overflow: hidden;
         text-align: center;
     }
+
     .emoji_box {
         width: 12.5%;
         height: 60px;
         float: left;
         padding: 30px 0 30px 0;
     }
+
     .emoji_box>img {
         width: 50px;
         height: 50px;
     }
+
     .caption {
         height: 24px;
     }
 </style>
 
 <script>
+    window.onload = fillBullet()
     function getEmojis() {
-        debugger
         const url = "https://api.github.com/emojis"
         var xhr = new XMLHttpRequest()
         xhr.open('GET', url, true)
-        xhr.send
-        debugger
+        xhr.send()
         xhr.onreadystatechange = function () {
-            debugger
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                var res = xhr.responseText
-                console.log(res)
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
             }
         }
     }
-    function fillEmoji() {
+    function fillBullet() {
+        const url = "https://api.github.com/emojis"
+        var xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.send()
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //console.log(xhr.responseText);
+                makeDocument(JSON.parse(decodeURI(xhr.responseText)))
+            } else {
+                makeDocument(githubEmojis)
+            }
+        }
+    }
 
-        for (var emoji in githubEmojis) {
+    function makeDocument(emojis) {
+        for (var emoji in emojis) {
             var element_a = document.createElement('a')
-            //console.log(emoji)
-            //console.log(githubEmojis[emoji])
+            // console.log(emoji)
+            // console.log(githubEmojis[emoji])
             element_a.innerText = emoji
             element_a.setAttribute('href', githubEmojis[emoji])
 
             var image = document.createElement('img')
             image.setAttribute('src', githubEmojis[emoji])
+            image.setAttribute('title', "点击复制emoji代码")
+            image.setAttribute('id', emoji)
+            image.addEventListener('click', function() {
+                console.log(this.getAttribute('id'))
+                const emojiName = this.getAttribute('id')
+                const emojiCode = ":" + emojiName + ":"
+                navigator.clipboard.writeText(emojiCode)
+                // alert("复制成功" + emojiName)
+            })
 
             var addElement = document.createElement('div')
             addElement.setAttribute('class', 'emoji_box')
@@ -89,10 +116,9 @@
             addElement.appendChild(div_a_box)
             document.getElementById('emojiList').appendChild(addElement)
         }
-
     }
 
-    const githubEmojis = {
+    let githubEmojis = {
         "100": "https://github.githubassets.com/images/icons/emoji/unicode/1f4af.png?v8",
         "1234": "https://github.githubassets.com/images/icons/emoji/unicode/1f522.png?v8",
         "+1": "https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png?v8",
