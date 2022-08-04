@@ -11,15 +11,18 @@
 
 <body>
     <div id="title">点击 Emoji 图标复制表情代码</div>
-    <div class="toast-wrap">
-        <span class="toast-msg"></span>
-    </div>
+    <p class="icon">
+        <a href="https://github.com/iszhaoxg/gitemoji">
+            <img src="https://github.githubassets.com/favicons/favicon.svg" alt="Build Status"
+                style="max-width: 100%;">
+        </a>
+    </p>
     <div id="emojiList"></div>
 </body>
 
 </html>
 <style>
-    body {
+    body p {
         margin: 0 auto;
         padding: 0;
     }
@@ -36,6 +39,14 @@
         width: 200px;
         border-radius: 3px;
         border: 3px solid palevioletred;
+    }
+    .icon {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        top: 42px;
+        right: 100px;
+        text-align: center;
     }
 
     #title {
