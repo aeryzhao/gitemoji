@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emoji</title>
+    <title>Github Emojis</title>
     <script src="dist/clipboard.min.js"></script>
 </head>
 
 <body>
-    <div id="emojiList">
-
+    <div id="title">点击 Emoji 图标复制表情代码</div>
+    <div class="toast-wrap">
+        <span class="toast-msg"></span>
     </div>
+    <div id="emojiList"></div>
 </body>
 
 </html>
@@ -24,6 +26,7 @@
 
     a {
         text-decoration: blink;
+        color: violet;
     }
 
     .btn {
@@ -35,15 +38,70 @@
         border: 3px solid palevioletred;
     }
 
+    #title {
+        text-align: center;
+        height: 100px;
+        font-weight: 400;
+        font-size: x-large;
+        color: green;
+        line-height: 100px;
+    }
+
+    .toast-wrap {
+        opacity: 0;
+        bottom: 10%;
+        color: pink;
+        width: 100%;
+        text-align: center;
+    }
+
+    .toast-msg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 2px 5px;
+        border-radius: 5px;
+        font-size: medium;
+    }
+
+    .toastAnimate {
+        animation: toastKF 2s;
+    }
+
+    @keyframes toastKF {
+        0% {
+            opacity: 0;
+        }
+
+        25% {
+            opacity: 1;
+            z-index: 9999
+        }
+
+        50% {
+            opacity: 1;
+            z-index: 9999
+        }
+
+        75% {
+            opacity: 1;
+            z-index: 9999
+        }
+
+        100% {
+            opacity: 0;
+            z-index: 0
+        }
+    }
+
     #emojiList {
-        border: 2px solid pink;
         overflow: hidden;
         text-align: center;
+        margin-left: 200px;
+        margin-right: 200px;
     }
 
     .emoji_box {
         width: 12.5%;
-        height: 60px;
+        height: 70px;
         float: left;
         padding: 30px 0 30px 0;
     }
@@ -87,35 +145,63 @@
     }
 
     function makeDocument(emojis) {
+        let allEmojiCode = ''
         for (var emoji in emojis) {
-            var element_a = document.createElement('a')
-            // console.log(emoji)
-            // console.log(githubEmojis[emoji])
-            element_a.innerText = emoji
-            element_a.setAttribute('href', githubEmojis[emoji])
-
-            var image = document.createElement('img')
-            image.setAttribute('src', githubEmojis[emoji])
-            image.setAttribute('title', "点击复制emoji代码")
-            image.setAttribute('id', emoji)
-            image.addEventListener('click', function() {
+            //allEmojiCode = allEmojiCode + ':' + emoji + ':'
+            const emojiUrl = emojis[emoji]
+            // 构造emoji的image图像
+            var imageTag = document.createElement('img')
+            imageTag.setAttribute('src', emojiUrl)
+            imageTag.setAttribute('title', "点击复制 emoji 代码")
+            imageTag.setAttribute('id', emoji)
+            imageTag.addEventListener('click', function () {
                 console.log(this.getAttribute('id'))
                 const emojiName = this.getAttribute('id')
                 const emojiCode = ":" + emojiName + ":"
                 navigator.clipboard.writeText(emojiCode)
                 // alert("复制成功" + emojiName)
+                toast(emojiName, '复制成功')
+                //toast2('复制成功')
             })
 
-            var addElement = document.createElement('div')
-            addElement.setAttribute('class', 'emoji_box')
-            addElement.appendChild(image)
+            // 构造a链接
+            var aTag = document.createElement('a')
+            aTag.innerText = emoji
+            aTag.setAttribute('href', emojiUrl)
+            var toastDiv = document.createElement('div')
+            toast.innerHTML = '111111'
+            toastDiv.setAttribute('class', 'toast-wrap')
+            toastDiv.setAttribute('id', 'toast-' + emoji)
+            var span = document.createElement('span')
+            span.setAttribute('id', 'span-' + emoji)
+            span.setAttribute('class', 'toast-msg')
+            span.innerText = 'xxxxxxxxx'
+            toastDiv.appendChild(span)
+            // 装A标签的盒子
             var div_a_box = document.createElement('div')
             div_a_box.setAttribute('class', 'caption')
-            div_a_box.appendChild(element_a)
+            div_a_box.appendChild(aTag)
+            div_a_box.appendChild(toastDiv)
 
-            addElement.appendChild(div_a_box)
-            document.getElementById('emojiList').appendChild(addElement)
+            // 根据json数据渲染的document文档
+            var emojiBox = document.createElement('div')
+            emojiBox.setAttribute('class', 'emoji_box')
+            emojiBox.appendChild(imageTag)
+            emojiBox.appendChild(div_a_box)
+            document.getElementById('emojiList').appendChild(emojiBox)
         }
+        //console.log(allEmojiCode)
+    }
+
+    function toast(id, msg) {
+        setTimeout(function () {
+            document.getElementById('span-' + id).innerHTML = msg;
+            var toastTag = document.getElementById('toast-' + id);
+            toastTag.className = toastTag.className.replace('toastAnimate', '');
+            setTimeout(function () {
+                toastTag.className = 'toast-wrap toastAnimate';
+            }, 10);
+        }, 500);
     }
 
     let githubEmojis = {
