@@ -145,9 +145,9 @@
         var xhr = new XMLHttpRequest()
         xhr.open('GET', url, true)
         xhr.send()
-        xhr.onreadystatechange = function () {
+        xhr.onloadend = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                //console.log(xhr.responseText);
+                // console.log(xhr.responseText);
                 makeDocument(JSON.parse(decodeURI(xhr.responseText)))
             } else {
                 makeDocument(githubEmojis)
